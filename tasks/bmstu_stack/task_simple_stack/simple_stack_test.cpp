@@ -259,7 +259,7 @@ TEST(StackTest, StringStack)
 	s.pop();
 	ASSERT_EQ(s.top(), "World");
 
-	s.pop();
+	s.pop(); 
 	ASSERT_EQ(s.top(), "Hello");
 }
 

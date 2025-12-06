@@ -28,7 +28,7 @@ class stack
         template <typename... Args>
         void emplace(Args&&... args)
   {
-    T* new_data = static_cast<T*>(operator new(sizeof(T)*(size_ + 1)));
+    T* new_data = (T*)operator new(sizeof(T)*(size_ + 1));
     for (size_t i=0; i<size_; ++i){
       new (new_data + i) T(std::move(data_[i]));
     }
@@ -43,7 +43,7 @@ class stack
 
         void push(const T& value) 
         {
-                T* new_data = static_cast<T*>(operator new(sizeof(T) * (size_+1)));
+                T* new_data = (T*)operator new(sizeof(T) * (size_+1));
                 for (size_t i = 0; i < size_; ++i)
                 {
                         new (new_data + i) T(std::move(data_[i]));
@@ -78,7 +78,7 @@ class stack
 
         void push(T&& value) 
         {
-                T* new_data = static_cast<T*>(operator new(sizeof(T) * (size_+1)));
+                T* new_data = (T*)operator new(sizeof(T) * (size_+1));
                 for (size_t i = 0; i < size_; ++i)
                 {
                         new (new_data + i) T(std::move(data_[i]));
@@ -103,4 +103,4 @@ class stack
         T *data_ = nullptr;
         size_t size_ = 0;
 };
-}  // namespace bmstu
+}
