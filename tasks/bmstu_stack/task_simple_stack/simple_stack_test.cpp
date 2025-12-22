@@ -259,7 +259,7 @@ TEST(StackTest, StringStack)
 	s.pop();
 	ASSERT_EQ(s.top(), "World");
 
-	s.pop(); 
+	s.pop();
 	ASSERT_EQ(s.top(), "Hello");
 }
 
@@ -324,4 +324,53 @@ TEST(StackTest, CheckBraceSequence)
 	ASSERT_FALSE(checkBraceSequence("(()"));
 	ASSERT_FALSE(checkBraceSequence("())"));
 	ASSERT_FALSE(checkBraceSequence(")("));
+}
+
+struct DummyType
+{
+	DummyType(const std::string& str, int id)
+	{
+		name = str;
+		uid = id;
+		++counter;
+		printf("DummyType(|%d|, name=\"%s\", id=%d)\n", counter, name.c_str(),
+			   uid);
+	}
+	DummyType(const DummyType& other) : name(other.name), uid(other.uid)
+	{
+		++counter;
+		printf("DummyType COPY(|%d|, name=\"%s\", id=%d)\n", counter,
+			   name.c_str(), uid);
+	}
+
+	DummyType(DummyType&& other) noexcept
+		: name(std::move(other.name)), uid(other.uid)
+	{
+		++counter;
+		printf("DummyType MOVE(|%d|, name=\"%s\", id=%d)\n", counter,
+			   name.c_str(), uid);
+	}
+	~DummyType()
+	{
+		printf("~DummyType(|%d|, name=\"%s\", id=%d)\n", counter, name.c_str(),
+			   uid);
+		--counter;
+	}
+
+	static int counter;
+	std::string name;
+	int uid;
+};
+
+int DummyType::counter = 0;
+
+TEST(StackTest, NonTrivialObject)
+{
+	bmstu::stack<DummyType> st1;
+	st1.emplace("Sasha", 10);
+	st1.emplace("Alice", 8);
+
+	bmstu::stack<DummyType> st2;
+	st2.emplace("Lesha", 20);
+	st2 = st1;
 }
