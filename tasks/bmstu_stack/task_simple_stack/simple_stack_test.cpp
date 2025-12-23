@@ -366,11 +366,68 @@ int DummyType::counter = 0;
 
 TEST(StackTest, NonTrivialObject)
 {
-	bmstu::stack<DummyType> st1;
-	st1.emplace("Sasha", 10);
-	st1.emplace("Alice", 8);
+	bmstu::stack<DummyType> stt1;
+	stt1.emplace("Sasha", 10);
+	stt1.emplace("Alice", 8);
 
+	bmstu::stack<DummyType> stt2;
+	stt2.emplace("Lesha", 20);
+	stt2 = stt1;
+}
+TEST(Ruleoffive, Destructor){
+	ASSERT_EQ(DummyType::counter, 0);
+	{
+		bmstu::stack<DummyType> st1;
+		st1.emplace("Sanya", 1);
+		st1.emplace("Vanya", 2);
+	}
+	EXPECT_EQ(DummyType::counter, 0);
+}
+TEST(Ruleoffive, Copyconstructor){
+	DummyType::counter = 0;
 	bmstu::stack<DummyType> st2;
-	st2.emplace("Lesha", 20);
-	st2 = st1;
+	st2.emplace("Sanya", 1);
+	st2.emplace("Vanya", 2);
+	bmstu::stack<DummyType> copyst2(st2);
+	EXPECT_EQ(copyst2.size(),2);
+	EXPECT_EQ(copyst2.top().name, "Vanya");
+	copyst2.pop();
+	EXPECT_EQ(copyst2.size(),1);
+	EXPECT_EQ(st2.size(),2);
+}
+TEST(Ruleoffive, Moveconstructor){
+	DummyType::counter = 0;
+	bmstu::stack<DummyType> st3;
+	st3.emplace("Sanya", 1);
+	bmstu::stack<DummyType> st3_1(std::move(st3));
+	EXPECT_EQ(st3.empty(), true);
+	EXPECT_EQ(st3_1.top().name, "Sanya");
+
+
+}
+TEST(Ruleoffive, Copyassignment){
+	DummyType::counter = 0;
+	bmstu::stack<DummyType> st4;
+	bmstu::stack<DummyType> st4_1;
+	st4.emplace("Sanya",1);
+	st4_1.emplace("Vanya",2);
+	st4 = st4_1;
+	EXPECT_EQ(st4_1.size(),1);
+	EXPECT_EQ(st4_1.top().name, "Vanya");
+
+
+}
+TEST(Ruleoffive, Moveassignment){
+	DummyType::counter = 0;
+	bmstu::stack<DummyType> st5;
+	bmstu::stack<DummyType> st5_1;
+	st5.emplace("Sanya",1);
+	st5_1.emplace("Vanya",2);
+	st5_1 = std::move(st5);
+	EXPECT_EQ(st5.empty(), true);
+	EXPECT_EQ(st5_1.top().name, "Sanya");
+	st5.emplace("Alice", 666);
+	EXPECT_EQ(st5.top().name,"Alice");
+
+
 }
